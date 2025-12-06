@@ -83,8 +83,8 @@ public class PaymentController {
 
             Map<String, String> response = new HashMap<>();
             if (isValid) {
-                // Save the successful transaction
-                Transaction transaction = new Transaction(paymentId, "captured", 100L, LocalDateTime.now());
+                // Save the successful transaction, amount is 1 Rupee (1L)
+                Transaction transaction = new Transaction(paymentId, "captured", 1L, LocalDateTime.now());
                 transactionRepository.save(transaction);
                 response.put("status", "success");
                 return ResponseEntity.ok(response);
