@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay Me ₹1 with Razorpay</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            background: linear-gradient(135deg, #e0f7fa 0%, #f1f8e9 100%);
+        }
+        .container {
+            text-align: center;
+            background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%); /* Subtle white gradient */
+            padding: 40px;
+            border-radius: 20px; /* Softer corners */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Deeper, softer shadow */
+            min-width: 300px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        h1 { color: #333; }
+        .pay-button { 
+            background-color: #007bff; 
+            color: white; 
+            padding: 15px 30px; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 1.2em; 
+            cursor: pointer; 
+            transition: background-color 0.3s; 
+        }
+        .pay-button:hover { background-color: #0056b3; }
+        #payment-status { margin-top: 20px; font-weight: bold; }
+        .stat h3 {
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .stylish-number {
+            font-size: 4.5em;
+            font-weight: bold;
+            color: #28a745; /* A nice green color */
+            margin: 10px 0 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pay me ₹1 to know how many members paid me ₹1</h1>
+        
+        <button class="pay-button" onclick="initiateRazorpayPayment()">Pay Now (₹1)</button>
+        <div id="payment-status"></div>
+
+        <div id="payment-results" style="display: none;">
+            <div class="stat">
+                <h3>Total Members Paid</h3>
+                <p id="total-members" class="stylish-number">0</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // We don't need to fetch stats on load anymore as they are hidden.
+        });
+
+        async function initiateRazorpayPayment() {
+            document.getElementById('payment-status').textContent = 'Initiating payment...';
+
+            try {
+                // 1. Create an Order on the server
+                const response = await fetch('/api/create-order', { method: 'POST' });
+                const orderData = await response.json();
+                const orderId = orderData.orderId;
+                const amount = orderData.amount;
+
+                // 2. Open Razorpay Checkout
+                const options = {
+                    key: 'rzp_test_RmLIfoSM3QXlgv', // Replace with your actual Razorpay Key ID
+                    amount: amount,
+                    currency: 'INR',
+                    name: 'PayMe 1 Rupee',
+                    description: 'Micro-transaction for ₹1',
+                    order_id: orderId,
+                    handler: function (response) {
+                        verifyRazorpayPayment(response);
+                    },
+                    notes: {
+                        address: 'Razorpay Corporate Office'
+                    },
+                    theme: {
+                        color: '#3399cc'
+                    }
+                };
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (response) {
+                    handlePaymentError(`Payment failed: ${response.error.description}`);
+                });
+                rzp.open();
+
+            } catch (error) {
+                console.error('Error initiating Razorpay payment:', error);
+                handlePaymentError(error.message || 'An unknown error occurred during payment initiation.');
+            }
+        }
+
+        async function verifyRazorpayPayment(paymentResponse) {
+            document.getElementById('payment-status').textContent = 'Verifying payment...';
+            try {
+                const response = await fetch('/api/verify-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(paymentResponse)
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    handlePaymentSuccess();
+                } else {
+                    handlePaymentError('Payment verification failed.');
+                }
+            } catch (error) {
+                console.error('Error verifying payment:', error);
+                handlePaymentError(error.message || 'An unknown error occurred during payment verification.');
+            }
+        }
+
+        function handlePaymentSuccess() {
+            document.getElementById('payment-status').textContent = '✅ Payment Successful!';
+            fetchStats(); // Fetch the latest stats
+            document.getElementById('payment-results').style.display = 'block'; // Show results
+            setTimeout(() => {
+                document.getElementById('payment-status').textContent = '';
+            }, 3000);
+        }
+
+        function handlePaymentError(message) {
+            document.getElementById('payment-status').textContent = `❌ Payment Failed: ${message}`;
+        }
+
+        async function fetchStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const stats = await response.json();
+                document.getElementById('total-members').innerText = stats.totalMembers;
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+    </script>
+</body>
+</html>
