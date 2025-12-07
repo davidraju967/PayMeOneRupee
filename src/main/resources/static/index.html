@@ -9,18 +9,26 @@
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             display: flex; 
-            justify-content: center; 
+            flex-direction: column;
+            justify-content: space-between; /* Pushes footer to the bottom */
             align-items: center; 
-            height: 100vh; 
+            min-height: 100vh; 
             margin: 0; 
-            background: linear-gradient(135deg, #e0f7fa 0%, #f1f8e9 100%);
+            background: linear-gradient(135deg, #6dd5ed 0%, #308d46 100%); /* New Green Gradient */
+        }
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
         .container {
             text-align: center;
-            background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%); /* Subtle white gradient */
+            background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%);
             padding: 40px;
-            border-radius: 20px; /* Softer corners */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Deeper, softer shadow */
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             min-width: 300px;
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
@@ -47,22 +55,64 @@
             color: #28a745; /* A nice green color */
             margin: 10px 0 20px 0;
         }
+        .footer {
+            background-color: #212529; /* Black background */
+            color: #f8f9fa; /* Light text color */
+            width: 100%;
+            padding: 10px 0; /* Minimal vertical padding */
+            text-align: center;
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .footer h3 {
+            display: none; /* Hide the "About This Project" heading */
+        }
+        .footer p {
+            color: #ccc;
+            margin-bottom: 5px; /* Minimal margin */
+            font-size: 0.8rem; /* Smaller font size */
+        }
+        .footer a {
+            color: #00aaff; /* A bright blue for links */
+            text-decoration: none;
+            margin: 0 5px; /* Tighter link spacing */
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Pay me ₹1 to know how many members paid me ₹1</h1>
-        
-        <button class="pay-button" onclick="initiateRazorpayPayment()">Pay Now (₹1)</button>
-        <div id="payment-status"></div>
+    <div class="main-content">
+        <div class="container">
+            <h1>Pay me ₹1 to know how many members paid me ₹1</h1>
+            
+            <button class="pay-button" onclick="initiateRazorpayPayment()">Pay Now (₹1)</button>
+            <div id="payment-status"></div>
 
-        <div id="payment-results" style="display: none;">
-            <div class="stat">
-                <h3>Total Members Paid</h3>
-                <p id="total-members" class="stylish-number">0</p>
+            <div id="payment-results" style="display: none;">
+                <div class="stat">
+                    <h3>Total Members Paid</h3>
+                    <p id="total-members" class="stylish-number">0</p>
+                </div>
             </div>
         </div>
     </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p><strong>About:</strong> This is a fun, experimental project to explore micro-transactions with Razorpay. By paying ₹1, you contribute to the live counter and see how many others have participated. It's a simple way to demonstrate a full payment cycle in a live environment. <strong>This is not a fraudulent site.</strong> The small amount is chosen to make participation easy and risk-free. All transactions are securely handled by Razorpay.</p>
+            <p>
+                <strong>Contact:</strong> Raju Perapogu |
+                <a href="mailto:your.email@example.com">davidrajup967@gmail.com</a> |
+                <a href="www.linkedin.com/in/raju-perapogu-bb42622a2" target="_blank">LinkedIn</a>
+                | <a href="/privacy.html">Privacy Policy & Terms</a>
+            </p>
+        </div>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
