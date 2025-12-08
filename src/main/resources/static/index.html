@@ -3,36 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pay Me ₹1 with Razorpay</title>
+    <title>Pay Me ₹1</title>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             display: flex; 
             flex-direction: column;
-            justify-content: space-between; /* Pushes footer to the bottom */
+            justify-content: space-between;
             align-items: center; 
             min-height: 100vh; 
             margin: 0; 
-            background: linear-gradient(135deg, #6dd5ed 0%, #308d46 100%); /* New Green Gradient */
+            background: linear-gradient(135deg, #308d46 0%, #000000 100%);
+            color: #f8f9fa;
         }
         .main-content {
             flex-grow: 1;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            text-align: center;
             padding: 20px;
         }
-        .container {
-            text-align: center;
-            background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            min-width: 300px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        .main-heading {
+            font-size: 3.75rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 0; /* Remove bottom margin */
         }
-        h1 { color: #333; }
+        .sub-heading {
+            font-size: 3.75rem;
+            font-weight: bold;
+            margin-top: 0; /* Remove top margin */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+        }
+        .description {
+            font-size: 1.5rem;
+            margin-top: 25px; /* Add some space after the main headings */
+            max-width: 600px;
+            margin-bottom: 25px;
+        }
+        .input-group { margin-top: 30px; margin-bottom: 20px; }
+        .input-group input {
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 80%;
+            max-width: 300px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
         .pay-button { 
             background-color: #007bff; 
             color: white; 
@@ -42,106 +67,81 @@
             font-size: 1.2em; 
             cursor: pointer; 
             transition: background-color 0.3s; 
+            font-family: 'Inter', sans-serif;
         }
         .pay-button:hover { background-color: #0056b3; }
         #payment-status { margin-top: 20px; font-weight: bold; }
-        .stat h3 {
-            margin-bottom: 5px;
-            color: #555;
-        }
-        .stylish-number {
-            font-size: 4.5em;
-            font-weight: bold;
-            color: #28a745; /* A nice green color */
-            margin: 10px 0 20px 0;
-        }
+
         .footer {
-            background-color: #212529; /* Black background */
-            color: #f8f9fa; /* Light text color */
+            background-color: #212529;
+            color: #f8f9fa;
             width: 100%;
-            padding: 10px 0; /* Minimal vertical padding */
+            padding: 10px 0;
             text-align: center;
         }
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        .footer h3 {
-            display: none; /* Hide the "About This Project" heading */
-        }
-        .footer p {
-            color: #ccc;
-            margin-bottom: 5px; /* Minimal margin */
-            font-size: 0.8rem; /* Smaller font size */
-        }
-        .footer a {
-            color: #00aaff; /* A bright blue for links */
-            text-decoration: none;
-            margin: 0 5px; /* Tighter link spacing */
-        }
-        .footer a:hover {
-            text-decoration: underline;
-        }
+        .footer-content { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .footer p { color: #ccc; margin-bottom: 5px; font-size: 0.8rem; }
+        .footer a { color: #00aaff; text-decoration: none; margin: 0 10px; }
+        .footer a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="main-content">
-        <div class="container">
-            <h1>Pay me ₹1 to know how many members paid me ₹1</h1>
-            
-            <button class="pay-button" onclick="initiateRazorpayPayment()">Pay Now (₹1)</button>
-            <div id="payment-status"></div>
-
-            <div id="payment-results" style="display: none;">
-                <div class="stat">
-                    <h3>Total Members Paid</h3>
-                    <p id="total-members" class="stylish-number">0</p>
-                </div>
-            </div>
+        <h1 class="main-heading">How Many People Paid ₹1?</h1>
+        <p class="sub-heading">Pay ₹1 to find out.</p>
+        <p class="description">Yes, that's right. Pay one rupee to discover how many people paid one rupee before you!</p>
+        
+        <div class="input-group">
+            <input type="text" id="contributor-name" placeholder="Enter your name">
         </div>
+        
+        <button class="pay-button" onclick="initiateRazorpayPayment()">Pay ₹1 to Get Featured</button>
+        <div id="payment-status"></div>
     </div>
 
     <footer class="footer">
         <div class="footer-content">
-            <p><strong>About:</strong> This is a fun, experimental project to explore micro-transactions with Razorpay. By paying ₹1, you contribute to the live counter and see how many others have participated. It's a simple way to demonstrate a full payment cycle in a live environment. <strong>This is not a fraudulent site.</strong> The small amount is chosen to make participation easy and risk-free. All transactions are securely handled by Razorpay.</p>
+            <p><strong>About:</strong> Pay Me One Rupee is a digital recognition platform where users can participate with a simple ₹1 payment and receive public acknowledgment. After successful payment, a supporter name is displayed on our public supporter wall with a unique rank and a thank-you message. We focus on transparency, secure payments through authorised gateways, and responsible digital participation. This is a genuine, transparent platform and <strong>not a fraudulent website</strong>. We are built to encourage positive community engagement.</p>
+            <hr style="border-color: #444; margin: 10px auto;">
             <p>
-                <strong>Contact:</strong> Raju Perapogu |
-                <a href="mailto:your.email@example.com">davidrajup967@gmail.com</a> |
-                <a href="www.linkedin.com/in/raju-perapogu-bb42622a2" target="_blank">LinkedIn</a>
-                | <a href="/privacy.html">Privacy Policy & Terms</a>
+                <a href="/terms.html">Terms & Conditions</a> |
+                <a href="/privacy.html">Privacy Policy</a> |
+                <a href="/refund.html">Refund & Cancellation</a> |
+                <a href="/contact.html">Contact Us</a>
             </p>
         </div>
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // We don't need to fetch stats on load anymore as they are hidden.
-        });
-
         async function initiateRazorpayPayment() {
+            const contributorName = document.getElementById('contributor-name').value;
+            if (!contributorName.trim()) {
+                alert('Please enter your name!');
+                return;
+            }
+
             document.getElementById('payment-status').textContent = 'Initiating payment...';
 
             try {
-                // 1. Create an Order on the server
-                const response = await fetch('/api/create-order', { method: 'POST' });
+                const response = await fetch('/api/create-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: contributorName })
+                });
                 const orderData = await response.json();
-                const orderId = orderData.orderId;
-                const amount = orderData.amount;
-
-                // 2. Open Razorpay Checkout
+                
                 const options = {
-                    key: 'rzp_test_RmLIfoSM3QXlgv', // Replace with your actual Razorpay Key ID
-                    amount: amount,
+                    key: 'rzp_test_RmLIfoSM3QXlgv',
+                    amount: orderData.amount,
                     currency: 'INR',
                     name: 'PayMe 1 Rupee',
-                    description: 'Micro-transaction for ₹1',
-                    order_id: orderId,
+                    description: 'Get your name on the Contributor Wall!',
+                    order_id: orderData.orderId,
                     handler: function (response) {
-                        verifyRazorpayPayment(response);
+                        verifyRazorpayPayment(response, contributorName);
                     },
                     notes: {
-                        address: 'Razorpay Corporate Office'
+                        contributor_name: contributorName
                     },
                     theme: {
                         color: '#3399cc'
@@ -155,52 +155,36 @@
 
             } catch (error) {
                 console.error('Error initiating Razorpay payment:', error);
-                handlePaymentError(error.message || 'An unknown error occurred during payment initiation.');
+                handlePaymentError('An error occurred during payment initiation.');
             }
         }
 
-        async function verifyRazorpayPayment(paymentResponse) {
+        async function verifyRazorpayPayment(paymentResponse, contributorName) {
             document.getElementById('payment-status').textContent = 'Verifying payment...';
             try {
                 const response = await fetch('/api/verify-payment', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(paymentResponse)
+                    body: JSON.stringify({
+                        ...paymentResponse,
+                        contributor_name: contributorName
+                    })
                 });
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    handlePaymentSuccess();
+                    window.location.href = `/contributors?name=${encodeURIComponent(result.name)}&rank=${result.rank}`;
                 } else {
                     handlePaymentError('Payment verification failed.');
                 }
             } catch (error) {
                 console.error('Error verifying payment:', error);
-                handlePaymentError(error.message || 'An unknown error occurred during payment verification.');
+                handlePaymentError('An error occurred during payment verification.');
             }
-        }
-
-        function handlePaymentSuccess() {
-            document.getElementById('payment-status').textContent = '✅ Payment Successful!';
-            fetchStats(); // Fetch the latest stats
-            document.getElementById('payment-results').style.display = 'block'; // Show results
-            setTimeout(() => {
-                document.getElementById('payment-status').textContent = '';
-            }, 3000);
         }
 
         function handlePaymentError(message) {
             document.getElementById('payment-status').textContent = `❌ Payment Failed: ${message}`;
-        }
-
-        async function fetchStats() {
-            try {
-                const response = await fetch('/api/stats');
-                const stats = await response.json();
-                document.getElementById('total-members').innerText = stats.totalMembers;
-            } catch (error) {
-                console.error('Error fetching stats:', error);
-            }
         }
     </script>
 </body>

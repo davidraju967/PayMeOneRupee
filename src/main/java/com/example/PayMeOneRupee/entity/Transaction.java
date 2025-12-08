@@ -14,6 +14,7 @@ public class Transaction {
     private Long id;
 
     private String transactionId;
+    private String contributorName; // Renamed from supporterName
     private String status;
     private Long amount;
     private LocalDateTime timestamp;
@@ -21,8 +22,9 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(String transactionId, String status, Long amount, LocalDateTime timestamp) {
+    public Transaction(String transactionId, String contributorName, String status, Long amount, LocalDateTime timestamp) {
         this.transactionId = transactionId;
+        this.contributorName = contributorName;
         this.status = status;
         this.amount = amount;
         this.timestamp = timestamp;
@@ -42,6 +44,14 @@ public class Transaction {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public String getContributorName() {
+        return contributorName;
+    }
+
+    public void setContributorName(String contributorName) {
+        this.contributorName = contributorName;
     }
 
     public String getStatus() {

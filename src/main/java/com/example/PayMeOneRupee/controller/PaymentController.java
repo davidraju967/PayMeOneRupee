@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -20,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@Controller
 public class PaymentController {
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
@@ -34,26 +36,22 @@ public class PaymentController {
     @Value("${razorpay.key.secret}")
     private String keySecret;
 
-    @GetMapping("/api/stats")
-    public Map<String, Object> getStats() {
-        long totalMembers = transactionRepository.countByStatus("captured");
-        long totalAmount = totalMembers; // Since each payment is ₹1
-        List<Transaction> recentTransactions = transactionRepository.findAll();
-
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("totalMembers", totalMembers);
-        stats.put("totalAmount", totalAmount);
-        stats.put("recentTransactions", recentTransactions);
-        return stats;
+    @GetMapping("/contributors")
+    public String contributors(Model model) {
+        List<Transaction> contributors = transactionRepository.findAllByOrderByTimestampDesc();
+        model.addAttribute("contributors", contributors);
+        model.addAttribute("totalContributors", contributors.size());
+        return "contributors";
     }
 
     @PostMapping("/api/create-order")
-    public ResponseEntity<Map<String, String>> createOrder() {
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> createOrder(@RequestBody Map<String, String> data) {
         try {
-            Order order = razorpayService.createOrder();
+            String contributorName = data.get("name");
+            Order order = razorpayService.createOrder(contributorName);
             Map<String, String> response = new HashMap<>();
 
-            // Explicitly cast the values from the Order object
             String orderId = (String) order.get("id");
             Integer amount = (Integer) order.get("amount");
 
@@ -68,11 +66,13 @@ public class PaymentController {
     }
 
     @PostMapping("/api/verify-payment")
+    @ResponseBody
     public ResponseEntity<Map<String, String>> verifyPayment(@RequestBody Map<String, String> paymentDetails) {
         try {
             String orderId = paymentDetails.get("razorpay_order_id");
             String paymentId = paymentDetails.get("razorpay_payment_id");
             String signature = paymentDetails.get("razorpay_signature");
+            String contributorName = paymentDetails.get("contributor_name");
 
             JSONObject options = new JSONObject();
             options.put("razorpay_order_id", orderId);
@@ -83,10 +83,14 @@ public class PaymentController {
 
             Map<String, String> response = new HashMap<>();
             if (isValid) {
-                // Save the successful transaction, amount is 1 Rupee (1L)
-                Transaction transaction = new Transaction(paymentId, "captured", 1L, LocalDateTime.now());
+                Transaction transaction = new Transaction(paymentId, contributorName, "captured", 1L, LocalDateTime.now());
                 transactionRepository.save(transaction);
+                
+                long totalContributors = transactionRepository.countByStatus("captured");
+
                 response.put("status", "success");
+                response.put("name", contributorName);
+                response.put("rank", String.valueOf(totalContributors));
                 return ResponseEntity.ok(response);
             } else {
                 response.put("status", "failure");

@@ -16,13 +16,17 @@ public class RazorpayService {
     @Value("${razorpay.key.secret}")
     private String keySecret;
 
-    public Order createOrder() throws RazorpayException {
+    public Order createOrder(String contributorName) throws RazorpayException {
         RazorpayClient razorpayClient = new RazorpayClient(keyId, keySecret);
 
         JSONObject orderRequest = new JSONObject();
         orderRequest.put("amount", 100); // amount in the smallest currency unit (100 paise = ₹1)
         orderRequest.put("currency", "INR");
         orderRequest.put("receipt", "txn_12345"); // A unique receipt ID for your reference
+
+        JSONObject notes = new JSONObject();
+        notes.put("contributor_name", contributorName);
+        orderRequest.put("notes", notes);
 
         return razorpayClient.orders.create(orderRequest);
     }
